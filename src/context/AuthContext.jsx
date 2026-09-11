@@ -220,6 +220,38 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // ------------------------------------------
+  // Social login (Google / phone via Firebase)
+  // ------------------------------------------
+  const socialLogin = useCallback(async (idToken) => {
+    dispatch({ type: "AUTH_START" });
+
+    try {
+      const response = await authService.firebaseLogin(idToken);
+      const data = response?.data || response;
+      const user = data?.user || null;
+      const token = data?.token || data?.accessToken;
+
+      if (!token) {
+        throw new Error(
+          "Authentication token was not returned by the server."
+        );
+      }
+
+      writeStoredAuth(user, token);
+      dispatch({ type: "AUTH_SUCCESS", payload: { user, token } });
+
+      return { user, token };
+    } catch (err) {
+      const message = extractErrorMessage(
+        err,
+        "Unable to sign in with that method."
+      );
+      dispatch({ type: "AUTH_FAILURE", payload: message });
+      throw err;
+    }
+  }, []);
+
+  // ------------------------------------------
   // Register
   // ------------------------------------------
   const register = useCallback(async (userData) => {
@@ -331,6 +363,7 @@ export const AuthProvider = ({ children }) => {
 
       login,
       register,
+      socialLogin,
       logout,
       updateUser,
       refreshUser,
@@ -345,6 +378,7 @@ export const AuthProvider = ({ children }) => {
       state.error,
       login,
       register,
+      socialLogin,
       logout,
       updateUser,
       refreshUser,

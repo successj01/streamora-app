@@ -18,3 +18,13 @@ root.render(
     </AuthProvider>
   </React.StrictMode>
 );
+
+if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register(`${process.env.PUBLIC_URL}/sw.js`)
+      .catch((err) => {
+        console.warn('Service worker registration failed:', err);
+      });
+  });
+}

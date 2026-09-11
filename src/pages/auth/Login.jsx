@@ -9,6 +9,7 @@ import {
   FiPlay,
 } from "react-icons/fi";
 import { useAuth } from "../../context/AuthContext";
+import SocialAuth from "../../components/auth/SocialAuth";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -269,6 +270,11 @@ const Login = () => {
               </button>
 
             </form>
+
+            {/* Social auth */}
+            <div className="mt-7">
+              <SocialAuth />
+            </div>
 
             {/* Register */}
             <div className="mt-7 border-t border-white/5 pt-6 text-center">

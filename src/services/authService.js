@@ -26,6 +26,18 @@ const authService = {
   },
 
   /**
+   * Exchange a verified Firebase ID token (Google or Phone) for a
+   * Streamora session.
+   */
+  firebaseLogin: async (idToken) => {
+    const response = await api.post("/auth/firebase", {
+      idToken,
+    });
+
+    return response.data;
+  },
+
+  /**
    * Get the currently authenticated user.
    */
   getCurrentUser: async () => {

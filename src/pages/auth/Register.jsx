@@ -12,6 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import SocialAuth from "../../components/auth/SocialAuth";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -178,6 +179,17 @@ const Register = () => {
                 <span>{success}</span>
               </div>
             )}
+
+            {/* Social auth */}
+            <div className="mb-7">
+              <SocialAuth />
+            </div>
+
+            <div className="mb-7 flex items-center gap-3 text-xs uppercase tracking-wider text-gray-600">
+              <span className="h-px flex-1 bg-white/10" />
+              or sign up with email
+              <span className="h-px flex-1 bg-white/10" />
+            </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
 
