@@ -1,10 +1,237 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Search, Play, SlidersHorizontal, Radio } from "lucide-react";
+import { Search, Play, Pause, SlidersHorizontal, Radio, Music2 } from "lucide-react";
 
 import StreamCard from "../components/stream/StreamCard";
 import { useStream } from "../context/StreamContext";
 import { STREAM_CATEGORIES } from "../utils/constants";
+
+const songs = [
+  {
+    id: "19-baba-reprise",
+    title: "19 Baba Reprise",
+    artist: "Unknown Artist",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/19 Baba Reprise-1.mp3",
+  },
+  {
+    id: "ab-ecclesiatiscal-jarasis",
+    title: "AB Ecclesiatiscal Jarasis",
+    artist: "Unknown Artist",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/ab ecclesiatiscal jarasis(01).mp3",
+  },
+  {
+    id: "again-o",
+    title: "Again O",
+    artist: "DJ 4kerty ft Zlatan, Ola Dips",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/DJ-4kerty-ft-Zlatan-X-Ola-Dips-\u2013-Again-O.mp3",
+  },
+  {
+    id: "amaka",
+    title: "Amaka",
+    artist: "2Baba ft Peruzzi",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/amaka-2baba-peruzzi.mp3",
+  },
+  {
+    id: "ayaka-ozubulu-1",
+    title: "Ayaka Ozubulu (1)",
+    artist: "Unknown Artist",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/AYAKA OZUBULU (1).mp3",
+  },
+  {
+    id: "ayaka-ozubulu-2",
+    title: "Ayaka Ozubulu (2)",
+    artist: "Unknown Artist",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/AYAKA OZUBULU (2).mp3",
+  },
+  {
+    id: "ayaka-ozubulu-3",
+    title: "Ayaka Ozubulu (3)",
+    artist: "Unknown Artist",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/AYAKA OZUBULU (3).mp3",
+  },
+  {
+    id: "ayaka-ozubulu-4",
+    title: "Ayaka Ozubulu (4)",
+    artist: "Unknown Artist",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/AYAKA OZUBULU (4).mp3",
+  },
+  {
+    id: "ayaka-ozubulu-5",
+    title: "Ayaka Ozubulu (5)",
+    artist: "Unknown Artist",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/AYAKA OZUBULU (5).mp3",
+  },
+  {
+    id: "baddest-boy-remix",
+    title: "Baddest Boy Remix",
+    artist: "Davido ft Skiibii",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Davido-Ft-Skiibii-Baddest-Boy-Remix-New-Song-(TrendyBeatz.com).mp3",
+  },
+  {
+    id: "blow-my-mind",
+    title: "Blow My Mind",
+    artist: "Davido ft Chris Brown",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Davido-Ft.-Chris-Brown-\u2013-Blow-My-Mind.mp3",
+  },
+  {
+    id: "come-go",
+    title: "Come Go",
+    artist: "ArrDee",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/ArrDee_Come_Go_(thinkNews.com.ng).mp3",
+  },
+  {
+    id: "dangote",
+    title: "Dangote",
+    artist: "Burna Boy",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Burna_Boy_Dangote_9jaflaver.com_.mp3",
+  },
+  {
+    id: "dey-ur-dey",
+    title: "Dey Ur Dey",
+    artist: "Lit Vybez ft Zlatan",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Dey-ur-Dey_by_Lit-Vybez-ft.-Zlatan.mp3",
+  },
+  {
+    id: "golibe",
+    title: "Golibe",
+    artist: "Flavour",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Flavour-Golibe-(JustNaija.com).mp3",
+  },
+  {
+    id: "high-way",
+    title: "High Way",
+    artist: "DJ Kaywise ft Phyno",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/DJ-Kaywise-High-Way-ft-Phyno-(JustNaija.com).mp3",
+  },
+  {
+    id: "jowo",
+    title: "Jowo",
+    artist: "Davido",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Davido-Jowo.mp3",
+  },
+  {
+    id: "killin-dem",
+    title: "Killin Dem",
+    artist: "Burna Boy ft Zlatan",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Burna_Boy_Ft_Zlatan_Killin_Dem_9jaflaver.com_-1.mp3",
+  },
+  {
+    id: "kwaku-the-traveller",
+    title: "Kwaku The Traveller",
+    artist: "Black Sherif",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Black-Sherif-Kwaku-The-Traveller-New-Song-(TrendyBeatz.com).mp3",
+  },
+  {
+    id: "la-la",
+    title: "La La",
+    artist: "Davido ft CKay",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Davido-La-La-ft.-CKay.mp3",
+  },
+  {
+    id: "last-last",
+    title: "Last Last",
+    artist: "Burna Boy",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Burna-Boy-Last-Last-New-Song-(TrendyBeatz.com).mp3",
+  },
+  {
+    id: "mans-not-hot",
+    title: "Mans Not Hot",
+    artist: "Big Shaq",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Big-Shaq-Mans-Not-Hot.mp3",
+  },
+  {
+    id: "mega-mix-11",
+    title: "Mega Mix 11",
+    artist: "DJ",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/dj mega mix 11 07052739261.mp3.mp3",
+  },
+  {
+    id: "mercy-acoustic",
+    title: "Mercy Acoustic",
+    artist: "Flavour & Semah",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Flavour_And_Semah_Mercy_Acoustic_9jaflaver.com_.mp3",
+  },
+  {
+    id: "omo-ope",
+    title: "Omo Ope",
+    artist: "Asake ft Olamide",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Asake_Olamide_-_Omo_Ope.mp3",
+  },
+  {
+    id: "on-the-low",
+    title: "On The Low",
+    artist: "Burna Boy",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Burna_Boy_On_The_Low_9jaflaver.com_.mp3",
+  },
+  {
+    id: "peace-be-unto-you",
+    title: "Peace Be Unto You",
+    artist: "Asake",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Asake_-_Peace_Be_Unto_You.mp3",
+  },
+  {
+    id: "philo",
+    title: "Philo",
+    artist: "Bella Shmurda ft Omah Lay",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Bella-Shmurda-Ft-Omah-Lay-Philo-(TrendyBeatz.com).mp3",
+  },
+  {
+    id: "pronto",
+    title: "Pronto",
+    artist: "Ajebo Hustlers ft Omah Lay",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Ajebo_Hustlers_-_Pronto_ft_Omah_Lay.mp3",
+  },
+  {
+    id: "risky",
+    title: "Risky",
+    artist: "Davido ft Popcaan",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Davido_Ft_Popcaan-_Risky_Via__9jaflaver.com_(5).mp3",
+  },
+  {
+    id: "terminator",
+    title: "Terminator",
+    artist: "Asake",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Asake_-_Terminator.mp3",
+  },
+  {
+    id: "the-best",
+    title: "The Best",
+    artist: "Davido ft Mayorkun",
+    category: "Afrobeat",
+    audioUrl: "/music/afrobeat/Davido-The-Best-ft.-Mayorkun-1.mp3",
+  },
+];
 
 const Browse = () => {
   const { streams, liveStreams, loadStreams, loading } = useStream();
