@@ -19,6 +19,7 @@ import CategoryCard from "../components/categories/CategoryCard";
 import { useStream } from "../context/StreamContext";
 import { STREAM_CATEGORIES } from "../utils/constants";
 import { normalizeCategory } from "../utils/streamData";
+import { compactNumber } from "../utils/formatNumber";
 
 const CATEGORY_IMAGES = {
   Gaming:
@@ -49,33 +50,18 @@ const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=900&q=80";
 
 const Home = () => {
-  const { liveStreams, categories, loadLiveStreams, loadCategories } = useStream();
+  const {
+    liveStreams,
+    categories,
+    loadLiveStreams,
+    loadCategories,
+    loading,
+  } = useStream();
 
   useEffect(() => {
     loadLiveStreams().catch(() => {});
     loadCategories().catch(() => {});
   }, [loadLiveStreams, loadCategories]);
-
-  const topCreators = useMemo(() => {
-    const seen = new Set();
-    const creators = [];
-
-    for (const stream of liveStreams) {
-      const username = stream.creator;
-      if (!username || seen.has(username)) continue;
-      seen.add(username);
-
-      creators.push({
-        id: stream._id || stream.id,
-        name: stream.creatorName || username,
-        username: `@${username}`,
-        avatar: stream.avatar,
-        verified: stream.verified,
-      });
-    }
-
-    return creators.slice(0, 8);
-  }, [liveStreams]);
 
   const categoryCards = useMemo(() => {
     if (categories && categories.length > 0) {
@@ -102,23 +88,43 @@ const Home = () => {
     }));
   }, [categories]);
 
-  const featured = liveStreams[0] || null;
+  const featured = useMemo(() => liveStreams[0] || null, [liveStreams]);
 
   const stats = useMemo(() => {
-    const totalCreators = topCreators.length || 0;
+    const seenCreators = new Set();
+
+    for (const stream of liveStreams) {
+      if (stream.creator) seenCreators.add(stream.creator);
+    }
+
     return {
       viewers:
         liveStreams.reduce((sum, s) => sum + (s.viewerCount || 0), 0) || 0,
-      creators: totalCreators,
+      creators: seenCreators.size || 0,
       streams: liveStreams.length,
     };
-  }, [liveStreams, topCreators.length]);
+  }, [liveStreams]);
 
-  const formatNumber = (number) => {
-    if (number >= 1000000) return `${(number / 1000000).toFixed(1)}M`;
-    if (number >= 1000) return `${(number / 1000).toFixed(1)}K`;
-    return number.toString();
-  };
+  const topCreators = useMemo(() => {
+    const seen = new Set();
+    const creators = [];
+
+    for (const stream of liveStreams) {
+      const username = stream.creator;
+      if (!username || seen.has(username)) continue;
+      seen.add(username);
+
+      creators.push({
+        id: stream._id || stream.id,
+        name: stream.creatorName || username,
+        username: `@${username}`,
+        avatar: stream.avatar,
+        verified: stream.verified,
+      });
+    }
+
+    return creators.slice(0, 8);
+  }, [liveStreams]);
 
   return (
     <main className="min-h-screen bg-[#0f0f10] text-white">
@@ -173,21 +179,21 @@ const Home = () => {
               <div className="mt-10 flex flex-wrap gap-8 border-t border-white/10 pt-7">
                 <div>
                   <p className="text-xl font-bold">
-                    {stats.viewers > 0 ? formatNumber(stats.viewers) : "—"}
+                    {stats.viewers > 0 ? compactNumber(stats.viewers) : "—"}
                   </p>
                   <p className="text-sm text-gray-500">Watching now</p>
                 </div>
 
                 <div>
                   <p className="text-xl font-bold">
-                    {stats.creators > 0 ? formatNumber(stats.creators) : "—"}
+                    {stats.creators > 0 ? compactNumber(stats.creators) : "—"}
                   </p>
                   <p className="text-sm text-gray-500">Creators live</p>
                 </div>
 
                 <div>
                   <p className="text-xl font-bold">
-                    {stats.streams > 0 ? formatNumber(stats.streams) : "—"}
+                    {stats.streams > 0 ? compactNumber(stats.streams) : "—"}
                   </p>
                   <p className="text-sm text-gray-500">Live streams</p>
                 </div>
@@ -245,7 +251,7 @@ const Home = () => {
                         </p>
 
                         <p className="text-xs text-gray-400">
-                          {formatNumber(featured.viewerCount)} watching
+                          {compactNumber(featured.viewerCount)} watching
                         </p>
                       </div>
                     </div>
@@ -279,7 +285,16 @@ const Home = () => {
           </Link>
         </div>
 
-        {liveStreams.length > 0 ? (
+        {loading ? (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div
+                key={index}
+                className="aspect-video animate-pulse rounded-2xl bg-white/[0.04]"
+              />
+            ))}
+          </div>
+        ) : liveStreams.length > 0 ? (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {liveStreams.slice(0, 4).map((stream) => (
               <StreamCard key={stream.id} stream={stream} />

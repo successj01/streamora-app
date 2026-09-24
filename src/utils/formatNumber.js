@@ -16,6 +16,30 @@ export function formatCurrency(amount, currencyCode = CURRENCY.CODE) {
 }
 
 /**
+ * Formats a compact count (1.2K / 3.4M) for viewer/follower numbers.
+ * Passes through non-numeric strings (e.g. "—", "1.2K" already formatted).
+ * @param {number|string} value
+ * @returns {string}
+ */
+export function compactNumber(value) {
+  if (typeof value === "string" && value.trim() !== "") return value;
+
+  const number = Number(value);
+
+  if (typeof number !== "number" || isNaN(number)) return "—";
+
+  if (number >= 1000000) {
+    return `${(number / 1000000).toFixed(1)}M`;
+  }
+
+  if (number >= 1000) {
+    return `${(number / 1000).toFixed(1)}K`;
+  }
+
+  return number.toString();
+}
+
+/**
  * Formats a plain number with thousands separators.
  * @param {number} num
  * @returns {string}

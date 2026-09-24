@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Search, Play, Pause, SlidersHorizontal, Radio, Music2 } from "lucide-react";
 
@@ -287,6 +287,42 @@ const Browse = () => {
 
   const categories = ["All", ...STREAM_CATEGORIES];
 
+  const [currentTrackId, setCurrentTrackId] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(null);
+
+  const togglePlay = (song) => {
+    if (!audioRef.current) return;
+
+    if (currentTrackId === song.id) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        audioRef.current.play();
+        setIsPlaying(true);
+      }
+    } else {
+      audioRef.current.src = song.audioUrl;
+      audioRef.current.play();
+      setCurrentTrackId(song.id);
+      setIsPlaying(true);
+    }
+  };
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handleEnded = () => {
+      setCurrentTrackId(null);
+      setIsPlaying(false);
+    };
+
+    audio.addEventListener("ended", handleEnded);
+    return () => audio.removeEventListener("ended", handleEnded);
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#0f0f10] px-4 py-8 text-white sm:px-6 lg:px-8">
       <section className="mx-auto max-w-7xl">
@@ -399,6 +435,58 @@ const Browse = () => {
             </div>
           </Link>
         )}
+
+        <div className="mb-16">
+          <div className="mb-5 flex items-center gap-2">
+            <Music2 size={22} className="text-red-500" />
+            <h2 className="text-xl font-semibold sm:text-2xl">
+              Afrobeat Music
+            </h2>
+          </div>
+
+          <audio ref={audioRef} className="hidden" />
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {songs.map((song) => {
+              const active = currentTrackId === song.id && isPlaying;
+
+              return (
+                <button
+                  key={song.id}
+                  onClick={() => togglePlay(song)}
+                  className={`group flex items-center gap-3 rounded-xl border p-4 text-left transition ${
+                    active
+                      ? "border-red-500/60 bg-red-500/10"
+                      : "border-white/10 bg-white/[0.04] hover:bg-white/[0.08]"
+                  }`}
+                >
+                  <span
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition ${
+                      active
+                        ? "bg-red-600 text-white"
+                        : "bg-white/10 text-gray-300 group-hover:bg-red-600 group-hover:text-white"
+                    }`}
+                  >
+                    {active ? (
+                      <Pause size={18} fill="currentColor" />
+                    ) : (
+                      <Play size={18} fill="currentColor" />
+                    )}
+                  </span>
+
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-semibold">
+                      {song.title}
+                    </span>
+                    <span className="block truncate text-xs text-gray-400">
+                      {song.artist}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         <div>
           <div className="mb-5 flex items-center justify-between">

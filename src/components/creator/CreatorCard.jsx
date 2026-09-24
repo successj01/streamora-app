@@ -5,6 +5,7 @@ import {
   FiUsers,
   FiUser,
 } from "react-icons/fi";
+import { compactNumber } from "../../utils/formatNumber";
 
 const CreatorCard = ({ creator }) => {
   if (!creator) return null;
@@ -78,22 +79,6 @@ const CreatorCard = ({ creator }) => {
   );
 };
 
-const formatFollowers = (value) => {
-  if (typeof value === "string") {
-    return value;
-  }
-
-  const number = Number(value) || 0;
-
-  if (number >= 1000000) {
-    return `${(number / 1000000).toFixed(1)}M`;
-  }
-
-  if (number >= 1000) {
-    return `${(number / 1000).toFixed(1)}K`;
-  }
-
-  return number.toString();
-};
+const formatFollowers = (value) => compactNumber(value);
 
 export default CreatorCard;
