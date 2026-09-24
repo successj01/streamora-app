@@ -268,12 +268,16 @@ const Browse = () => {
     return streams[0] || null;
   }, [streams, liveStreams]);
 
+  const normalizeKey = (value) =>
+    String(value || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+
   const filteredStreams = useMemo(() => {
     const value = search.toLowerCase().trim();
+    const categoryKey = normalizeKey(activeCategory);
 
     return streams.filter((stream) => {
       const matchesCategory =
-        activeCategory === "All" || stream.category === activeCategory;
+        activeCategory === "All" || normalizeKey(stream.category) === categoryKey;
 
       const matchesSearch =
         !value ||
