@@ -29,6 +29,9 @@ let _auth = null;
 
 const getApp = () => {
   if (!_app) {
+    if (!getFirebaseConfigured()) {
+      throw new Error("Firebase is not properly configured. Please check your REACT_APP_FIREBASE_* environment variables.");
+    }
     _app = initializeApp(firebaseConfig);
   }
   return _app;

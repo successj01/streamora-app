@@ -126,11 +126,11 @@ const SocialAuth = () => {
   };
 
   const handleSendCode = async (event) => {
-    event.preventDefault();
+    event?.preventDefault();
     setError("");
 
-    if (!/^\+?[0-9\s-]{7,15}$/.test(phone.trim())) {
-      setError("Enter a valid phone number with your country code, e.g. +2348012345678.");
+    if (!/^\+[1-9][0-9]{7,14}$/.test(phone.trim())) {
+      setError("Enter a phone number in international format, e.g. +2348012345678.");
       return;
     }
 
