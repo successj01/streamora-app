@@ -18,13 +18,32 @@ import { useAuth } from "../../context/AuthContext";
 const firebaseErrorMessage = (err) => {
   const messages = {
     "auth/popup-closed-by-user": "The sign-in window was closed before you finished.",
+
     "auth/cancelled-popup-request": "Sign-in was cancelled.",
+
+    "auth/popup-blocked":
+    "Your browser blocked the Google sign-in popup. Please allow popups and try again.",
+
     "auth/invalid-verification-code": "That code was incorrect. Check it and try again.",
+
     "auth/code-expired": "That code has expired. Request a new one.",
+
     "auth/invalid-phone-number": "That phone number doesn't look valid. Include your country code, e.g. +2348012345678.",
+
     "auth/quota-exceeded": "Too many SMS requests. Please wait a minute and retry.",
+
     "auth/missing-verification-code": "Enter the code you received on your phone.",
+
     "auth/too-many-requests": "Too many attempts. Please wait a moment and try again.",
+
+    "auth/operation-not-allowed":
+    "Phone sign-in is not enabled in Firebase Authentication. Please enable Phone in Firebase Console.",
+
+    "auth/captcha-check-failed":
+    "reCAPTCHA verification failed. Please refresh the page and try again.",
+
+   "auth/unauthorized-domain":
+    "This website is not authorized for Firebase Authentication. Add the website domain in Firebase Console.",
   };
 
   return messages[err?.code] || err?.message || "Something went wrong. Please try again.";
