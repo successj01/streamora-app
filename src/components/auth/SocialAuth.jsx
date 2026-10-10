@@ -274,6 +274,8 @@ const SocialAuth = () => {
           {!confirmation ? (
             <form onSubmit={handleSendCode} className="space-y-3">
               <input
+                id="phone"
+                name="phone"
                 type="tel"
                 inputMode="tel"
                 autoComplete="tel"
@@ -308,10 +310,13 @@ const SocialAuth = () => {
                   className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500"
                 />
                 <input
+                  id="Verification-code"
+                  name="Verification-code"
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
                   maxLength={6}
+                  autoComplete="one-time-code"
                   value={otp}
                   onChange={(event) => setOtp(event.target.value)}
                   placeholder="123456"

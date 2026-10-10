@@ -52,7 +52,7 @@ const Login = () => {
       setLoading(true);
 
       const { user } = await login({
-        email: formData.email,
+        email: formData.email.trim(),
         password: formData.password,
       });
 
@@ -247,6 +247,7 @@ const Login = () => {
 
                 <input
                   id="remember"
+                  name="remember"
                   type="checkbox"
                   className="h-4 w-4 rounded border-white/20 bg-black/20 text-purple-600 focus:ring-purple-500"
                 />
