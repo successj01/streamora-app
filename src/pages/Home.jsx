@@ -20,6 +20,7 @@ import { useStream } from "../context/StreamContext";
 import { STREAM_CATEGORIES } from "../utils/constants";
 import { normalizeCategory } from "../utils/streamData";
 import { compactNumber } from "../utils/formatNumber";
+import streamoraHomeImage from "../assets/images/streamora-home.jpg";
 
 const CATEGORY_IMAGES = {
   Gaming:
@@ -200,65 +201,58 @@ const Home = () => {
               </div>
             </div>
 
-            {featured && (
-              <div className="relative hidden lg:block">
-                <Link
-                  to={`/stream/${featured.id}`}
-                  className="group relative block overflow-hidden rounded-3xl border border-white/10 bg-[#18181b] shadow-2xl"
-                >
-                  {featured.thumbnail ? (
-                    <img
-                      src={featured.thumbnail}
-                      alt={featured.title}
-                      className="h-[420px] w-full object-cover transition duration-700 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-[420px] items-center justify-center bg-[#18181b] text-gray-600">
-                      <FiRadio size={48} />
+            <div className="relative hidden lg:block">
+              <div className="group relative block cursor-default overflow-hidden rounded-3xl border border-white/10 bg-[#18181b] shadow-2xl">
+                <img
+                  src={featured?.thumbnail || streamoraHomeImage}
+                  alt={featured?.title || "Streamora live streaming"}
+                  className="h-[420px] w-full object-cover transition duration-700 group-hover:scale-105"
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+
+                {featured && (
+                  <>
+                    <div className="absolute left-5 top-5 flex items-center gap-2 rounded-md bg-red-600 px-3 py-1.5 text-xs font-bold uppercase">
+                      <FiRadio size={14} />
+                      Live
                     </div>
-                  )}
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+                    <div className="absolute bottom-5 left-5 right-5">
+                      <p className="mb-2 text-sm text-purple-300">
+                        {featured.category}
+                      </p>
 
-                  <div className="absolute left-5 top-5 flex items-center gap-2 rounded-md bg-red-600 px-3 py-1.5 text-xs font-bold uppercase">
-                    <FiRadio size={14} />
-                    Live
-                  </div>
+                      <h3 className="text-2xl font-bold">{featured.title}</h3>
 
-                  <div className="absolute bottom-5 left-5 right-5">
-                    <p className="mb-2 text-sm text-purple-300">
-                      {featured.category}
-                    </p>
+                      <div className="mt-3 flex items-center gap-3">
+                        {featured.avatar ? (
+                          <img
+                            src={featured.avatar}
+                            alt={featured.creator}
+                            className="h-9 w-9 rounded-full border-2 border-purple-500 object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-purple-500 bg-purple-600/30 text-sm font-bold">
+                            {featured.creator?.charAt(0)?.toUpperCase()}
+                          </div>
+                        )}
 
-                    <h3 className="text-2xl font-bold">{featured.title}</h3>
+                        <div>
+                          <p className="text-sm font-semibold">
+                            {featured.creator}
+                          </p>
 
-                    <div className="mt-3 flex items-center gap-3">
-                      {featured.avatar ? (
-                        <img
-                          src={featured.avatar}
-                          alt={featured.creator}
-                          className="h-9 w-9 rounded-full border-2 border-purple-500 object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-purple-500 bg-purple-600/30 text-sm font-bold">
-                          {featured.creator?.charAt(0)?.toUpperCase()}
+                          <p className="text-xs text-gray-400">
+                            {compactNumber(featured.viewerCount)} watching
+                          </p>
                         </div>
-                      )}
-
-                      <div>
-                        <p className="text-sm font-semibold">
-                          {featured.creator}
-                        </p>
-
-                        <p className="text-xs text-gray-400">
-                          {compactNumber(featured.viewerCount)} watching
-                        </p>
                       </div>
                     </div>
-                  </div>
-                </Link>
+                  </>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </div>
       </section>
